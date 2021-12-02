@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
 	// "google.golang.org/grpc/internal/status"
@@ -15,15 +14,16 @@ import (
 )
 
 type LaptopServer struct {
+	pb.UnimplementedLaptopServiceServer
 	laptopStore LaptopStore
 }
 
 func NewLaptopServer(laptopStore LaptopStore) *LaptopServer {
-	return &LaptopServer{laptopStore}
+	return &LaptopServer{laptopStore:laptopStore}
 }
 
-func (s *LaptopServer) CreateLaptop(ctx context.Context, in *pb.CreateLaptopRequest, opts ...grpc.CallOption) (*pb.CreateLaptopResponse, error) {
-	laptop := in.GetLaptop()
+func (s *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error) {
+	laptop := req.GetLaptop()
 	log.Printf("get a create laptop request with id: %s", laptop)
 
 	if ctx.Err() == context.Canceled {

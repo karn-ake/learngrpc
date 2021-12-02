@@ -11,10 +11,11 @@ import (
 
 type LaptopStore interface {
 	Save(l *pb.Laptop) error
+	Find(id string) (*pb.Laptop, error)
 }
 
 type InMemoryLaptopStore struct {
-	mutex sync.Mutex
+	mutex sync.RWMutex
 	data  map[string]*pb.Laptop
 }
 
@@ -52,4 +53,16 @@ func deepCopy(l *pb.Laptop) (*pb.Laptop, error) {
 	}
 
 	return other, nil
+}
+
+func (s *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	laptop := s.data[id]
+	if laptop == nil {
+		return nil, nil
+	}
+
+	return deepCopy(laptop)
 }

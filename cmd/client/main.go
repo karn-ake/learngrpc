@@ -44,5 +44,7 @@ func main() {
 		return
 	}
 
+	log.Printf("request create laptop: %v", req)
 	log.Printf("create laptop with ID: %s", res.Id)
+
 }
